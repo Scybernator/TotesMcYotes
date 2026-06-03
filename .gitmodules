@@ -1,0 +1,3 @@
+[submodule "themes/red-wolf"]
+	path = themes/red-wolf
+	url = https://github.com/scybernator/red-wolf.git
