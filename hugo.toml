@@ -1,6 +1,6 @@
 baseURL = 'https://example.org/'
 locale = 'en-us'
-title = 'My New Hugo Project'
+title = 'Red Wolves of Texas'
 theme = 'red-wolf'
 
 [markup.tableOfContents]

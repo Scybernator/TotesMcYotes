@@ -1,0 +1,1 @@
+This is the text that appears on the front of the home page.  This chunk of the site is called the 'Hero Section' because it's the big important bit on your landing page people read first.  I don't love that terminology because it's salesman talk, not design language, but my push to call it the site's 'Tramp Stamp' isn't picking up any steam.
