@@ -1,4 +1,4 @@
-baseURL = 'https://easttexascanids.org/'
+baseURL = 'https://easttexascanids.net/'
 locale = 'en-us'
 title = 'East Texas Canids'
 theme = 'red-wolf'
