@@ -1,5 +1,5 @@
 /**
- * POST /api/submit-photo
+ * POST /upload-photo
  *
  * Accepts a multipart form with:
  *   - photo  (required, image/*)
@@ -184,7 +184,7 @@ export async function onRequest(context) {
   }
 
   if (!env.PHOTO_EMAIL_TO) {
-    return new Response(JSON.stringify({ error: 'Server not configured (no recipient).' }), {
+    return new Response(JSON.stringify({ error: 'Server not configured (no recipient). Set PHOTO_EMAIL_TO in Cloudflare Pages environment variables.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -215,8 +215,11 @@ export async function onRequest(context) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    console.error('submit-photo error:', err);
-    return new Response(JSON.stringify({ error: 'Failed to send photo. Please try again.' }), {
+    console.error('upload-photo error:', err);
+    const message = env.PHOTO_EMAIL_TO
+      ? 'Failed to send photo. Check your email provider configuration.'
+      : 'Server not configured. Set PHOTO_EMAIL_TO and EMAIL_API_KEY in Cloudflare Pages.';
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
