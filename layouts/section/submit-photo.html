@@ -1,0 +1,304 @@
+{{ define "main" }}
+<div class="page">
+  <nav class="nav"></nav>
+  <div class="content" style="display:block">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+
+    <form id="photo-form" class="photo-form">
+      <input type="hidden" name="_csrf" value="{{ .File.UniqueID }}">
+
+      <div class="form-group">
+        <label for="photo">Photo <span class="required">*</span></label>
+        <div class="file-input-wrapper">
+          <input type="file" id="photo" name="photo" accept="image/*" required>
+          <div class="file-input-label">Choose a photo…</div>
+        </div>
+        <div id="photo-preview" class="photo-preview">
+          <img id="preview-img" alt="Preview">
+          <button type="button" id="remove-photo" class="btn-remove" aria-label="Remove photo">&times;</button>
+        </div>
+        <small>Max 10 MB. JPEG, PNG, or WebP.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" maxlength="100">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Your Email</label>
+        <input type="email" id="email" name="email" maxlength="254">
+      </div>
+
+      <div class="form-group">
+        <label for="message">Notes</label>
+        <textarea id="message" name="message" rows="4" maxlength="2000" placeholder="Where was this taken? What am I looking at?"></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submit-btn">
+        <span class="btn-text">Send Photo</span>
+        <span class="btn-spinner" hidden></span>
+      </button>
+
+      <div id="form-status" class="form-status" hidden></div>
+    </form>
+  </div>
+  <aside class="aside"></aside>
+</div>
+
+<style>
+.photo-form {
+  max-width: 540px;
+  margin-top: var(--space-md);
+}
+
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-heading);
+}
+
+.required {
+  color: var(--color-accent);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* File input */
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input-wrapper input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: inherit;
+  font-size: 0.95rem;
+}
+
+.file-input-label::before {
+  content: "\1F4F7";
+  font-size: 1.2rem;
+}
+
+/* Photo preview */
+.photo-preview {
+  display: none;
+  position: relative;
+  margin-top: var(--space-sm);
+}
+
+.photo-preview.visible {
+  display: inline-block;
+}
+
+.photo-preview img {
+  max-height: 240px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Submit button */
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.8rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-submit:hover {
+  background: var(--hunter-green);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status messages */
+.form-status {
+  margin-top: var(--space-md);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.form-status.success {
+  background: var(--tea-green);
+  border: 1px solid var(--forest-green);
+  color: var(--evergreen);
+}
+
+.form-status.error {
+  background: #fde8e8;
+  border: 1px solid #e74c3c;
+  color: #a93226;
+}
+</style>
+
+<script>
+(function() {
+  const form = document.getElementById('photo-form');
+  const fileInput = document.getElementById('photo');
+  const preview = document.getElementById('photo-preview');
+  const previewImg = document.getElementById('preview-img');
+  const removeBtn = document.getElementById('remove-photo');
+  const submitBtn = document.getElementById('submit-btn');
+  const btnText = submitBtn.querySelector('.btn-text');
+  const btnSpinner = submitBtn.querySelector('.btn-spinner');
+  const status = document.getElementById('form-status');
+
+  // File preview
+  fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) { preview.classList.remove('visible'); return; }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showStatus('Photo must be under 10 MB.', 'error');
+      this.value = '';
+      preview.classList.remove('visible');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      preview.classList.add('visible');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  removeBtn.addEventListener('click', function() {
+    fileInput.value = '';
+    preview.classList.remove('visible');
+    previewImg.src = '';
+  });
+
+  // Form submission
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    status.hidden = true;
+    status.className = 'form-status';
+
+    if (!fileInput.files[0]) {
+      showStatus('Please select a photo to upload.', 'error');
+      return;
+    }
+
+    const fd = new FormData(form);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/submit-photo', { method: 'POST', body: fd });
+      const data = await res.json();
+
+      if (res.ok) {
+        showStatus(data.message || 'Photo sent! Thanks for sharing.', 'success');
+        form.reset();
+        preview.classList.remove('visible');
+        previewImg.src = '';
+      } else {
+        showStatus(data.error || 'Something went wrong. Try again later.', 'error');
+      }
+    } catch (err) {
+      showStatus('Network error. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  function setLoading(loading) {
+    submitBtn.disabled = loading;
+    btnText.hidden = loading;
+    btnSpinner.hidden = !loading;
+  }
+
+  function showStatus(msg, type) {
+    status.textContent = msg;
+    status.className = 'form-status ' + type;
+    status.hidden = false;
+  }
+})();
+</script>
+{{ end }}

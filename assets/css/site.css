@@ -1,0 +1,20 @@
+.hero-inner a[href^="/submit-photo"] {
+  display: inline;
+  text-wrap-mode: nowrap;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.hero-inner a[href^="/submit-photo"]:hover {
+  background: var(--hunter-green);
+  transform: scale(1.03);
+}

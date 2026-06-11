@@ -1,0 +1,35 @@
+{{- /* Loads the theme's main stylesheet (css/main.css from the red-wolf theme assets). */}}
+{{- /* Falls back gracefully: if the site dir has assets/css/main.css it shadows the theme's copy. */}}
+{{- with resources.Get "css/main.css" }}
+  {{- $opts := dict
+    "minify" (cond hugo.IsDevelopment false true)
+    "sourceMap" (cond hugo.IsDevelopment "linked" "none")
+  }}
+  {{- with . | css.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* Loads site-level overrides from assets/css/site.css (if the file exists). */}}
+{{- /* This keeps custom styles separate from the theme, so theme updates don't clobber them. */}}
+{{- with resources.Get "css/site.css" }}
+  {{- $opts := dict
+    "minify" (cond hugo.IsDevelopment false true)
+    "sourceMap" (cond hugo.IsDevelopment "linked" "none")
+  }}
+  {{- with . | css.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
