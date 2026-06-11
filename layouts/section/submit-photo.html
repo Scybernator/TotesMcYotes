@@ -270,7 +270,7 @@
     setLoading(true);
 
     try {
-      const res = await fetch('/upload-photo', { method: 'POST', body: fd });
+      const res = await fetch('/api/submit-photo', { method: 'POST', body: fd });
       const data = await res.json();
 
       if (res.ok) {

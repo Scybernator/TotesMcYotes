@@ -1,5 +1,5 @@
 /**
- * POST /upload-photo
+ * POST /api/submit-photo
  *
  * Accepts a multipart form with:
  *   - photo  (required, image/*)
@@ -22,9 +22,8 @@
  * ================================================================
  */
 
-// ── Validation ──────────────────────────────────────────────────
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_SIZE = 10 * 1024 * 1024;
 
 function validate(file) {
   if (!file) return 'No photo uploaded.';
@@ -33,7 +32,6 @@ function validate(file) {
   return null;
 }
 
-// ── Email sending (pluggable) ──────────────────────────────────
 async function sendEmail(file, fields, env) {
   const provider = (env.EMAIL_PROVIDER || 'resend').toLowerCase();
 
@@ -49,11 +47,6 @@ async function sendEmail(file, fields, env) {
   }
 }
 
-/* ── Resend ─────────────────────────────────────────────────────
- *   Docs: https://resend.com/docs/api-reference/emails/send-email
- *   Env:  EMAIL_API_KEY (required)
- *         Optionally set PHOTO_EMAIL_FROM (default: noreply@yourdomain.com)
- */
 async function sendViaResend(file, fields, env) {
   const buf = await file.arrayBuffer();
   const b64 = arrayBufferToBase64(buf);
@@ -83,11 +76,6 @@ async function sendViaResend(file, fields, env) {
   return data;
 }
 
-/* ── SendGrid ──────────────────────────────────────────────────
- *   Docs: https://docs.sendgrid.com/api-reference/mail-send
- *   Env:  EMAIL_API_KEY (required)
- *         Optionally set PHOTO_EMAIL_FROM
- */
 async function sendViaSendGrid(file, fields, env) {
   const buf = await file.arrayBuffer();
   const b64 = arrayBufferToBase64(buf);
@@ -120,12 +108,6 @@ async function sendViaSendGrid(file, fields, env) {
   return { id: 'sendgrid-ok' };
 }
 
-/* ── Mailgun ────────────────────────────────────────────────────
- *   Docs: https://documentation.mailgun.com/en/latest/api-sending.html
- *   Env:  EMAIL_API_KEY  (required — "key-..." or your API key)
- *         MAILGUN_DOMAIN (required — e.g. "mg.yourdomain.com")
- *         Optionally set PHOTO_EMAIL_FROM
- */
 async function sendViaMailgun(file, fields, env) {
   const buf = await file.arrayBuffer();
   const bytes = [...new Uint8Array(buf)];
@@ -154,7 +136,6 @@ async function sendViaMailgun(file, fields, env) {
   return res.json();
 }
 
-// ── Helpers ─────────────────────────────────────────────────────
 function buildEmailBody(fields) {
   const parts = ['A new photo was submitted via the website.'];
   if (fields.name) parts.push(`\nName: ${fields.name}`);
@@ -172,7 +153,6 @@ function arrayBufferToBase64(buf) {
   return btoa(binary);
 }
 
-// ── Request handler ─────────────────────────────────────────────
 export async function onRequest(context) {
   const { request, env } = context;
 
@@ -184,7 +164,7 @@ export async function onRequest(context) {
   }
 
   if (!env.PHOTO_EMAIL_TO) {
-    return new Response(JSON.stringify({ error: 'Server not configured (no recipient). Set PHOTO_EMAIL_TO in Cloudflare Pages environment variables.' }), {
+    return new Response(JSON.stringify({ error: 'Server not configured. Set PHOTO_EMAIL_TO in Cloudflare Pages environment variables.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -194,9 +174,9 @@ export async function onRequest(context) {
     const fd = await request.formData();
     const photo = fd.get('photo');
 
-    const error = validate(photo);
-    if (error) {
-      return new Response(JSON.stringify({ error }), {
+    const validationError = validate(photo);
+    if (validationError) {
+      return new Response(JSON.stringify({ error: validationError }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -215,11 +195,8 @@ export async function onRequest(context) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    console.error('upload-photo error:', err);
-    const message = env.PHOTO_EMAIL_TO
-      ? 'Failed to send photo. Check your email provider configuration.'
-      : 'Server not configured. Set PHOTO_EMAIL_TO and EMAIL_API_KEY in Cloudflare Pages.';
-    return new Response(JSON.stringify({ error: message }), {
+    console.error('submit-photo error:', err);
+    return new Response(JSON.stringify({ error: err.message || 'Failed to send photo. Please try again.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
