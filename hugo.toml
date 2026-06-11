@@ -1,6 +1,6 @@
-baseURL = 'https://texasredwolves.org/'
+baseURL = 'https://easttexascanids.org/'
 locale = 'en-us'
-title = 'Red Wolves of Texas'
+title = 'East Texas Canids'
 theme = 'red-wolf'
 
 [markup.tableOfContents]
