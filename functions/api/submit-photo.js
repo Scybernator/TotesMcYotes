@@ -18,12 +18,13 @@
  * TO ADD YOUR PROVIDER:
  *   1. Add a new case in sendEmail() below
  *   2. Set EMAIL_PROVIDER and EMAIL_API_KEY in Cloudflare Pages
- *   3. Optionally add provider-specific env vars (see comments)
+ *   3. Optionally add provider-specific env vars
  * ================================================================
  */
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 10 * 1024 * 1024;
+const DEFALT_SENDER = 'noreply@easttexascanids.net'
 
 function validate(file) {
   if (!file) return 'No photo uploaded.';
@@ -52,7 +53,7 @@ async function sendViaResend(file, fields, env) {
   const b64 = arrayBufferToBase64(buf);
 
   const body = {
-    from: env.PHOTO_EMAIL_FROM || 'Photo Submission <noreply@texasredwolves.org>',
+    from: env.PHOTO_EMAIL_FROM || 'Photo Submission <' + DEFALT_SENDER + '>',
     to: [env.PHOTO_EMAIL_TO],
     subject: `Photo submission from ${fields.name || 'anonymous'}`,
     text: buildEmailBody(fields),
@@ -82,7 +83,7 @@ async function sendViaSendGrid(file, fields, env) {
 
   const body = {
     personalizations: [{ to: [{ email: env.PHOTO_EMAIL_TO }] }],
-    from: { email: env.PHOTO_EMAIL_FROM || 'noreply@texasredwolves.org' },
+    from: { email: env.PHOTO_EMAIL_FROM || DEFALT_SENDER },
     subject: `Photo submission from ${fields.name || 'anonymous'}`,
     content: [{ type: 'text/plain', value: buildEmailBody(fields) }],
     attachments: [{
