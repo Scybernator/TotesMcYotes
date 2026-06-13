@@ -47,3 +47,5 @@ Then navigate to http://localhost:1313
 
 ## Updating the site logo/hero image
  To update the site logo/hero images, replace the images in `/assets/images` with ones of the same resolution. The site will automically crop them into circles, so you don't have to.
+
+ To update the *favicon* (the little image the shows up next to the page in the browser), ask your brother.
