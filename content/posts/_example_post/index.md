@@ -1,14 +1,13 @@
 +++
 title = 'Example Post'
 subtitle = 'How to write a markdown article'
-summary = 'This is the summary text that appears in the page card'
 date = 2026-05-09T15:34:54+00:00
 draft = true
 tags = ['draft']
 cardImage = 'Mississippi_Kite_Cropped_0.jpg'
 +++
 
-This is an example post that shows how to do various markdown things. 
+This is an example post that shows how to do various markdown things. It won't show up on the live site so long as it's marked as a draft.
 
 <!--more-->
 

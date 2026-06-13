@@ -6,11 +6,12 @@ Before you push changes to the live site, check the following:
 
 1. Have I set the `draft` field on the front matter of my posts to 'true'?
 1. Have I reviewed the post to make sure all images and footnotes are displaying correctly?
+1. Has the post's `date` field been set to the correct date/time? 
 1. Have I checked that the page card is displaying the correct image, and has a good summary?
 1. Open the source control tab in VSCodium.  
     1. Are all my changes listed here?
     1. Are there any unexpected changes here? (your changes should generally only be in the `content` or `assets` directories, the other folders contain technical stuff)
-
+    
 ## Committing changes
 
 Once you are confident in your changes, the changes need to be *staged* in the source control tab.  This can be accomplied by clicking the '+' icon next to the files in the source control panel.

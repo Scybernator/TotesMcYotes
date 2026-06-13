@@ -4,12 +4,11 @@
 ## Adding a New Post 
  1. Create a new folder under the `posts` directory.
  1. Add an `index.md` file to your new folder.
- 1. Add the following front-matter to the top of the file:
+ 1. Add the following *front-matter* to the top of the file:
  ```m
 +++
 title = 'This is the title'
 subtitle = 'This is the subtitle'
-summary = 'This is the summary (Appears in the page card on the home page)'
 date = 2026-05-09T15:34:54+00:00
 draft = true
 tags = ['red wolves', 'blue wolves']
@@ -37,16 +36,14 @@ Best practice is just to specify the image explicitly using `cardImage`
 
 ### Card Summary
 
-The text summary is specified according the the rules laid out [here](https://gohugo.io/content-management/summaries/), though by default it's going to be there first 300 or so characters of the post.
+The text summary is specified according the the rules laid out [here](https://gohugo.io/content-management/summaries/), though by default it's going to be there first 300 or so characters of the post.  The only exception is the `summary` front matter property doesn't seem to be working as intended.
 
 ## Running the Site
- To see what your changes are going to look like in the browser, open the terminal (&#229e;+~) and run
+ To see what your changes are going to look like in the browser, open the terminal in VSCodium (Ctrl+~) and run
 ```
 hugo server -D
 ```
 Then navigate to http://localhost:1313
 
 ## Updating the site logo/hero image
- To update the site logo/hero images, replace the images in `/assets/images` with ones of the same resolution.
- - What are the resolutions
- - [ ] Where to set favicon
+ To update the site logo/hero images, replace the images in `/assets/images` with ones of the same resolution. The site will automically crop them into circles, so you don't have to.

@@ -1,13 +1,14 @@
 # Setting Up
-
+1. Create a [github](https://github.com) account.
 1. Install [git](https://git-scm.com/install)
 1. Install [Hugo](https://gohugo.io/installation/)[^1]
 1. Install [VSCodium](https://github.com/VSCodium/vscodium/releases)
+    1. Login to your github account in VSCodium
     1. Install [this extension](https://open-vsx.org/extension/raer0/codium-insertdatestring) for formatting datetime.
     1. Navigate to `Settings` and set the **Insert Date String: Format** to 'YYYY-MM-DDTHH:mm:ss+00:00
 
 ## Pull site down
-Open the command prompt (&#229e; + "cmd")
+Open the command prompt (hit the Windows key and run "cmd")
  ```
  git clone https://github.com/scybernator/TotesMcYotes.git
  cd TotesMcYotes
