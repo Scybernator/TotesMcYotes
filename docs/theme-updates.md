@@ -1,0 +1,2 @@
+# Theme Updates
+If there are updates to the sites [red-wolf](https://github.com/Scybernator/red-wolf) theme that you want to include, open the Source Control panel in VSCodium and pull changes on the red-wolf section.  This will add a file to your changes that indicates the theme should be updated to the latest version.  You can commit this file just like any other change and syncronize it to update the live site.
